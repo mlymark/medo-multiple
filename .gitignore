@@ -1,3 +1,5 @@
 /medo-dao/target/
 /medo-model/target/
 /medo-service/target/
+/medo-api/target/
+/medo-admin/target/
