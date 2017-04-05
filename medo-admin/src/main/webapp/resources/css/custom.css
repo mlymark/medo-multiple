@@ -1,0 +1,28 @@
+.header-title{
+    position: absolute;
+    width: 30%;
+    padding-left: 35%;
+    padding-right: 35%;
+}
+.user-setting{
+    position: relative;
+    float: right;
+}
+.caret {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px solid;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+.user-setting ul{
+    list-style: none;
+}
+.user-setting ul li{
+    float: left;
+    margin-left: 20px;
+    margin-top: 40px;
+}

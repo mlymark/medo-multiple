@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>ME DO</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link type="text/css" href="${request.contextPath}/resources/css/custom.css" rel="stylesheet" />
+    </h:head>
+    <h:body>
+        <p:importConstants type="au.com.w4u.medo.admin.constants.CommonConstants" var="CommonConstants" />
+        <h:form id="form">
+            <p:layout fullPage="true">
+                <p:layoutUnit style="padding-left: 20px" position="north" size="105">
+                    <div class="logo">
+                        <h1 class="header-title">Me Do  后台管理系统</h1>
+                        <div class="user-setting">
+                            <ul style="margin-right:0;" class="">
+                                <li class="">
+                                     你好,<a class="user-setting-name" href="#">#{authoritySession.userName}</a>
+                                </li>
+                                <li class="">
+                                    <a class="user-setting-logout" href="${request.contextPath}/j_spring_security_logout">退出</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </p:layoutUnit>
+                <p:layoutUnit position="west" size="220" resizable="true">
+                    <p:menu style="width:180px" rendered="#{authoritySession.currentRole == CommonConstants.ROLE_PLATFORM_MANAGER}">
+                        <p:submenu label="订单管理">
+                            <p:menuitem value="管理订单" outcome="orders" icon="ui-icon-plus" />
+                        </p:submenu>
+                        <p:submenu label="用户管理">
+                            <p:menuitem value="用户列表" outcome="users" icon="ui-icon-user"/>
+                            <p:menuitem value="添加用户" outcome="adduser" icon="ui-icon-plus"/>
+                        </p:submenu>
+                        <p:submenu label="价格管理">
+                            <p:menuitem value="价格列表" outcome="prices" icon="ui-icon-star"/>
+                            <p:menuitem value="添加物料" outcome="addprice" icon="ui-icon-plus"/>
+                        </p:submenu>
+                    </p:menu>
+                    <p:menu style="width:180px" rendered="#{authoritySession.currentRole == CommonConstants.ROLE_USER}">
+                        <p:submenu label="服务管理">
+                            <p:menuitem value="服务列表" outcome="adduser" icon="ui-icon-help"/>
+                            <p:menuitem value="服务预约" outcome="users" icon="ui-icon-help"/>
+                        </p:submenu>
+                    </p:menu>
+                </p:layoutUnit>
+                <p:layoutUnit position="center" id="layoutCenter">
+                    <ui:insert name="content" />
+                </p:layoutUnit>
+                <p:layoutUnit position="south" size="100">
+                    <ui:insert name="button" />
+                </p:layoutUnit>
+            </p:layout>
+        </h:form>
+    </h:body>
+</html>

@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Medo - Sign Up</title>
+        <link type="text/css" href="../resources/css/signup.css" rel="stylesheet" />
+        <style type="text/css">
+ 
+        </style>
+    </h:head>
+    <h:body>
+        <div class="logo">
+            <a href="#"><img src="../resources/image/logo.png" alt="" style="margin-left: 20px" /></a>
+        </div>
+        <div id="left_container" style="">
+            <p:fieldset legend="注册" > 
+                    <h:form>
+                        <h:panelGrid id="grid" columns="3" cellpadding="5">
+                            <p:outputLabel for="username" value="用户名:" />
+                            <p:inputText id="username" required="true" value="#{signUpView.username}" />
+                            <p:message for="username" display="text" />
+                            
+                            <p:outputLabel for="email" value="邮箱:" />
+                            <p:inputText id="email" required="true" value="#{signUpView.email}" />
+                            <p:message for="email" display="text" />
+
+                            <p:outputLabel for="usertype" value="用户类型:" />
+                            <p:selectOneRadio id="usertype" value="#{signUpView.type}">
+                                <f:selectItem itemLabel="个人" itemValue="0" />
+                                <f:selectItem itemLabel="企业" itemValue="1" />
+                            </p:selectOneRadio>
+                            <p:message for="usertype" display="text" />
+
+                            <h:outputLabel for="pwd1" value="密码:" />
+                            <p:password id="pwd1" value="#{signUpView.password}" match="pwd2"  required="true" />
+                            <p:message for="pwd1" display="text" />
+
+                            <h:outputLabel for="pwd2" value="确认密码:" />
+                            <p:password id="pwd2" value="#{signUpView.password1}" required="true" />
+                            <p:message for="pwd2" display="text" />
+
+                            <p:outputLabel for="address" value="地址:" />
+                            <p:inputText id="address" required="true" value="#{signUpView.address}" />
+                            <p:message for="address" display="text" />
+
+                            <p:outputLabel for="desc" value="标注:" />
+                            <p:inputTextarea id="desc"  value="#{signUpView.descn}" />
+                        </h:panelGrid>
+
+                        <p:commandButton id="signup" value="注册" update="grid" actionListener="#{signUpView.signUp()}" />
+
+                </h:form>
+            </p:fieldset>
+	</div>
+    </h:body>
+</html>
+

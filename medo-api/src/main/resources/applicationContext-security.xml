@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans:beans xmlns="http://www.springframework.org/schema/security"  
+    xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context.xsd  
+                        http://www.springframework.org/schema/tx  
+                        http://www.springframework.org/schema/tx/spring-tx.xsd  
+                        http://www.springframework.org/schema/security  
+                        http://www.springframework.org/schema/security/spring-security.xsd"> 
+     
+    <http use-expressions="true">
+        <intercept-url pattern="/api/**" access="hasRole ('ROLE_PLATFORM_MANAGER')" />
+        <http-basic entry-point-ref="myBasicAuthenticationEntryPoint" /> 
+    </http>  
+    
+    <beans:bean id="builder" class="au.com.w4u.medo.api.security.RequestMapBulider">
+        <beans:property name="rescService" ref="rescService" />  
+    </beans:bean> 
+    
+    <beans:bean id="securityMetadataSource"  
+        class="au.com.w4u.medo.api.security.MyFilterInvocationSecurityMetadataSource">  
+        <beans:property name="builder" ref="builder"></beans:property>  
+    </beans:bean>  
+    
+    <!-- 认证过滤器 -->  
+    <beans:bean id="filterSecurityInterceptor"  
+        class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">  
+        <!-- 用户拥有的权限 -->  
+        <beans:property name="accessDecisionManager" ref="accessDecisionManager" />  
+        <!-- 用户是否拥有所请求资源的权限 -->  
+        <beans:property name="authenticationManager" ref="authenticationManager" />  
+        <!-- 资源与权限对应关系 -->  
+        <beans:property name="securityMetadataSource" ref="securityMetadataSource" />  
+    </beans:bean>  
+  
+    <!-- acl领域模型 -->  
+    <beans:bean id="accessDecisionManager" class="au.com.w4u.medo.api.security.MyAccessDecisionManager" ></beans:bean>  
+    <!-- -->  
+    <authentication-manager alias="authenticationManager">  
+        <authentication-provider user-service-ref="userDetailsService">
+            <!--加密算法通过md5盐值加密password{username}，base64编码; 也可以自己定义加密规则--> 
+            <password-encoder hash="md5" base64="true">
+               <salt-source user-property="username"/>
+            </password-encoder>
+        </authentication-provider>  
+    </authentication-manager>  
+    <!-- 配置userDetailsService -->  
+    <beans:bean id="userDetailsService"  
+        class="au.com.w4u.medo.api.security.MyUserDetailsService">  
+         <beans:property name="userService" ref="userService" /> 
+    </beans:bean>
+    
+</beans:beans>  

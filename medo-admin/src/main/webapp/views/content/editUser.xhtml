@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                 template="../templates/template.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <h3>  编辑用户信息  </h3>
+        <h:panelGrid id="grid" columns="6" cellpadding="5">
+            <p:outputLabel for="username" value="用户名:" />
+            <p:inputText id="username" required="true" value="#{editUserView.editUser.username}"  />
+            <p:message for="username" display="text" />
+
+            <p:outputLabel for="email" value="邮箱:" />
+            <p:inputText id="email" required="true" value="#{editUserView.editUser.email}"  />
+            <p:message for="email" display="text" />
+
+            <p:outputLabel for="usertype" value="用户类型:" />
+            <p:selectOneRadio id="usertype" value="#{editUserView.editUser.type}">
+                <f:selectItem itemLabel="个人" itemValue="0" />
+                <f:selectItem itemLabel="企业" itemValue="1" />
+            </p:selectOneRadio>
+            <p:message for="usertype" display="text" />
+
+            <p:outputLabel for="address" value="地址:" />
+            <p:inputText id="address" required="true" value="#{editUserView.editUser.address}" />
+            <p:message for="address" display="text" />
+
+            <p:outputLabel for="desc" value="标注:" />
+            <p:inputTextarea id="desc"  value="#{editUserView.editUser.descn}" />
+            <p:message for="desc" display="text" />
+            
+            <p:outputLabel for="status" value="状态:"  />
+            <p:selectOneRadio id="status" value="#{editUserView.editUser.status}">
+                <f:selectItem itemLabel="未激活" itemValue="0" />
+                <f:selectItem itemLabel="已激活" itemValue="1" />
+            </p:selectOneRadio>
+            <p:message for="status" display="text" />
+            
+            <p:outputLabel for="role" value="用户角色:"  />
+            <p:selectOneMenu id="role" value="#{editUserView.roleId}">
+                <f:selectItem itemLabel="商户" itemValue="1" />
+                <f:selectItem itemLabel="司机" itemValue="2" />
+                <f:selectItem itemLabel="安装工" itemValue="3" />
+                <f:selectItem itemLabel="商务人员" itemValue="4" />
+                <f:selectItem itemLabel="平台管理" itemValue="5" />
+            </p:selectOneMenu>
+        </h:panelGrid>
+    </ui:define>
+    <ui:define name="button">
+        <div style="padding-top: 20px; padding-right: 50px; display: block;float: right;">
+            <p:commandButton action="#{editUserView.updateUser()}" value="保存" /> 
+        </div>
+    </ui:define>
+</ui:composition>

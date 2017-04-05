@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<beans:beans xmlns="http://www.springframework.org/schema/security"  
+    xmlns:beans="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+    xsi:schemaLocation="http://www.springframework.org/schema/beans  
+                        http://www.springframework.org/schema/beans/spring-beans.xsd  
+                        http://www.springframework.org/schema/context  
+                        http://www.springframework.org/schema/context/spring-context.xsd  
+                        http://www.springframework.org/schema/tx  
+                        http://www.springframework.org/schema/tx/spring-tx.xsd  
+                        http://www.springframework.org/schema/security  
+                        http://www.springframework.org/schema/security/spring-security.xsd"> 
+     
+    <http security="none" pattern="/views/error/**" />
+    <http security="none" pattern="/views/signup.xhtml" />
+    <http auto-config="false" entry-point-ref="loginUrlAuthenticationEntryPoint"> 
+        <!--该参数3.x版本的时候默认就为true，但是升级到4.x后该参数默认false了--> 
+        <csrf disabled="true"/>
+        <access-denied-handler error-page="/views/error/403.html" />
+        <intercept-url pattern="/views/login.xhtml*" access="IS_AUTHENTICATED_ANONYMOUSLY"/>
+        <logout invalidate-session="true" delete-cookies = "JSESSIONID"  logout-success-url="/views/login.xhtml"  logout-url="/j_spring_security_logout" /> 
+        <!--限制同时只能一个相同用户登录-->
+        <session-management invalid-session-url="/views/login.xhtml" session-fixation-protection="migrateSession" >
+            <concurrency-control max-sessions = "1" error-if-maximum-exceeded = "true" />
+        </session-management>
+        <custom-filter ref="myUsernamePasswordAuthenticationFilter"  position="FORM_LOGIN_FILTER" />  
+        <!--替换默认REMEMBER_ME_FILTER-->   
+        <custom-filter ref="rememberMeFilter" position="REMEMBER_ME_FILTER"/>  
+        <!-- 通过配置custom-filter来增加过滤器，before="FILTER_SECURITY_INTERCEPTOR"表示在SpringSecurity默认的过滤器之前执行。 -->  
+        <custom-filter ref="filterSecurityInterceptor" before="FILTER_SECURITY_INTERCEPTOR" />  
+    </http>  
+    <beans:bean id="loginUrlAuthenticationEntryPoint"   
+        class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <beans:constructor-arg value="/views/login.xhtml"/>  
+    </beans:bean>   
+      
+    <beans:bean id="builder" class="au.com.w4u.medo.admin.security.RequestMapBulider">
+        <beans:property name="rescService" ref="rescService" />  
+    </beans:bean> 
+    
+    <beans:bean id="securityMetadataSource"  
+        class="au.com.w4u.medo.admin.security.MyFilterInvocationSecurityMetadataSource">  
+        <beans:property name="builder" ref="builder"></beans:property>  
+    </beans:bean>  
+  
+    <beans:bean id="myUsernamePasswordAuthenticationFilter"  
+        class="au.com.w4u.medo.admin.security.MyUsernamePasswordAuthenticationFilter">  
+        <beans:property name="filterProcessesUrl" value="/j_spring_security_check" />  
+        <beans:property name="authenticationManager" ref="authenticationManager" />  
+        <beans:property name="authenticationSuccessHandler"  
+            ref="loginLogAuthenticationSuccessHandler" />  
+        <beans:property name="authenticationFailureHandler"  
+            ref="simpleUrlAuthenticationFailureHandler" />  
+        <beans:property name="rememberMeServices" ref="rememberMeServices" />  
+    </beans:bean>  
+  
+    <beans:bean id="loginLogAuthenticationSuccessHandler"  
+        class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler"> 
+        <beans:property name="targetUrlParameter" value="/views/content/home.xhtml" />  
+    </beans:bean>  
+    
+    <beans:bean id="simpleUrlAuthenticationFailureHandler"  
+        class="org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler">  
+        <beans:property name="defaultFailureUrl" value="/views/login.xhtml?error=true" />  
+    </beans:bean>  
+  
+  
+    <!-- 认证过滤器 -->  
+    <beans:bean id="filterSecurityInterceptor"  
+        class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">  
+        <!-- 用户拥有的权限 -->  
+        <beans:property name="accessDecisionManager" ref="accessDecisionManager" />  
+        <!-- 用户是否拥有所请求资源的权限 -->  
+        <beans:property name="authenticationManager" ref="authenticationManager" />  
+        <!-- 资源与权限对应关系 -->  
+        <beans:property name="securityMetadataSource" ref="securityMetadataSource" />  
+    </beans:bean>  
+  
+    <!-- acl领域模型 -->  
+    <beans:bean id="accessDecisionManager" class="au.com.w4u.medo.admin.security.MyAccessDecisionManager" ></beans:bean>  
+    <!-- -->  
+    <authentication-manager alias="authenticationManager">  
+        <authentication-provider user-service-ref="userDetailsService">
+            <!--加密算法通过md5盐值加密password{username}，base64编码; 也可以自己定义加密规则--> 
+            <password-encoder hash="md5" base64="true">
+               <salt-source user-property="username"/>
+            </password-encoder>
+        </authentication-provider>  
+        <!-- 记住密码 -->  
+        <authentication-provider ref="rememberMeAuthenticationProvider"></authentication-provider>  
+    </authentication-manager>  
+    <!-- 配置userDetailsService -->  
+    <beans:bean id="userDetailsService"  
+        class="au.com.w4u.medo.admin.security.MyUserDetailsService">  
+         <beans:property name="userService" ref="userService" /> 
+    </beans:bean>
+    <!-- Remember-Me 对应的 Filter -->  
+    <beans:bean id="rememberMeFilter"  
+        class="org.springframework.security.web.authentication.rememberme.RememberMeAuthenticationFilter">  
+        <beans:constructor-arg ref="authenticationManager"/>
+	<beans:constructor-arg ref="rememberMeServices"/>
+    </beans:bean>  
+    <!-- rememberService -->  
+    <!-- RememberMeServices 的实现 -->  
+    <beans:bean id="rememberMeServices"  
+        class="org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices">  
+        <beans:constructor-arg value="w4u"/>
+	<beans:constructor-arg ref="userDetailsService"/>
+         <!-- 指定PersistentTokenRepository -->
+        <beans:constructor-arg ref="tokenRepository" />
+         <!--指定 request 中包含的用户是否选择了记住我的参数名-->   
+        <beans:property name="parameter" value="rememberMe" />  
+        <!--token 有效时间 此处设置为一天-->
+        <beans:property name="tokenValiditySeconds" value="86400"/>
+    </beans:bean>  
+    
+    <beans:bean id="tokenRepository" 
+                class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+        <!--数据源--> 
+        <beans:property name="dataSource" ref="dataSource"/>
+         <!--是否在系统启动时创建持久化token的数据库表--> 
+        <beans:property name="createTableOnStartup" value="false"/>
+    </beans:bean>
+    
+    <!-- 记住密码 -->  
+    <!-- key 值需与对应的 RememberMeServices 保持一致 -->  
+    <beans:bean id="rememberMeAuthenticationProvider"  
+        class="org.springframework.security.authentication.RememberMeAuthenticationProvider">  
+        <beans:constructor-arg value="w4u"/>
+    </beans:bean>  
+     
+      
+</beans:beans>  

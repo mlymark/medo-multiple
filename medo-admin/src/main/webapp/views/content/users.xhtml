@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:h="http://java.sun.com/jsf/html"
+                template="../templates/template.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="content">
+        <p:dataTable var="user" value="#{userView.users}" widgetVar="usersTable"
+                     rows="10" paginator="true"  rowsPerPageTemplate="5,10,15"
+                     paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                     emptyMessage="No users found" filteredValue="#{userView.filteredUsers}">
+ 
+            <f:facet name="header">
+                <p:outputPanel>
+                    <h:outputText value="Search all fields:" />
+                    <p:inputText id="globalFilter" onkeyup="PF('usersTable').filter()" style="width:150px" placeholder="Enter keyword"/>
+                </p:outputPanel>
+            </f:facet>
+
+            <p:column filterBy="#{user.username}" headerText="用户名" filterMatchMode="contains" width="180">
+                <h:outputText value="#{user.username}" />
+            </p:column>
+            
+            <p:column filterBy="#{user.address}" headerText="地址"  filterMatchMode="contains">
+                <h:outputText value="#{user.address}" />
+            </p:column>
+            
+            <p:column filterBy="#{user.role.id}" headerText="用户角色" footerText="exact" filterMatchMode="exact">
+                <f:facet name="filter">
+                    <p:selectOneMenu onchange="PF('usersTable').filter()" >
+                        <f:converter converterId="javax.faces.Integer" />
+                        <f:selectItem itemLabel="All" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItem itemLabel="商户" itemValue="1" />
+                        <f:selectItem itemLabel="司机" itemValue="2" />
+                        <f:selectItem itemLabel="安装工" itemValue="3" />
+                        <f:selectItem itemLabel="商务人员" itemValue="4" />
+                        <f:selectItem itemLabel="平台管理" itemValue="5" />
+                    </p:selectOneMenu>
+                </f:facet>
+                <ui:fragment rendered="#{user.role.id == 1}">
+                    <h:outputText  value="商户" />
+                </ui:fragment>
+                <ui:fragment rendered="#{user.role.id == 2}">
+                    <h:outputText  value="司机" />
+                </ui:fragment>
+                <ui:fragment rendered="#{user.role.id == 3}">
+                    <h:outputText  value="安装工" />
+                </ui:fragment>
+                <ui:fragment rendered="#{user.role.id == 4}">
+                    <h:outputText  value="商务人员" />
+                </ui:fragment>
+                <ui:fragment rendered="#{user.role.id == 5}">
+                    <h:outputText  value="平台管理" />
+                </ui:fragment>
+            </p:column>
+
+            <p:column filterBy="#{user.type}" headerText="用户类型"  filterMatchMode="equals">
+                <f:facet name="filter">
+                    <p:selectOneButton onchange="PF('usersTable').filter()">
+                        <f:converter converterId="javax.faces.Integer" />
+                        <f:selectItem itemLabel="All" itemValue="" />
+                        <f:selectItem itemLabel="个人" itemValue="0" />
+                        <f:selectItem itemLabel="企业" itemValue="1" />
+                    </p:selectOneButton>
+                </f:facet>
+                <h:outputText value="#{user.type == 0 ? '个人': user.type == 1 ? '企业':''}" />
+            </p:column>
+
+            <p:column filterBy="#{user.createDate}" headerText="创建日期" filterMatchMode="contains" width="180">
+                <h:outputText value="#{user.createDate}" />
+            </p:column>
+
+            <p:column filterBy="#{user.status}" headerText="状态" filterMatchMode="equals" >
+                <f:facet name="filter">
+                    <p:selectOneButton onchange="PF('usersTable').filter()">
+                        <f:converter converterId="javax.faces.Integer" />
+                        <f:selectItem itemLabel="All" itemValue="" />
+                        <f:selectItem itemLabel="未激活" itemValue="0" />
+                        <f:selectItem itemLabel="已激活" itemValue="1" />
+                    </p:selectOneButton>
+                </f:facet>
+                <ui:fragment rendered="#{user.status == 0}">
+                    <h:outputText style="color:red;" value="未激活" />
+                </ui:fragment>
+                <ui:fragment rendered="#{user.status == 1}">
+                    <h:outputText style="color:green;" value="已激活" />
+                </ui:fragment>
+            </p:column>
+            <p:column headerText="编辑" width="40">
+                <p:commandLink action="#{userView.editUser(user)}" value="编辑" />
+            </p:column>
+        </p:dataTable>
+    </ui:define>
+    <ui:define name="button">
+        <div style="padding-top: 20px; padding-right: 50px; display: block;float: right;">
+            
+        </div>
+    </ui:define>
+</ui:composition>
