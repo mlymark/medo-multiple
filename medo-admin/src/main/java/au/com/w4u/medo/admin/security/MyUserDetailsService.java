@@ -37,9 +37,10 @@ public class MyUserDetailsService implements UserDetailsService {
         if (user != null) {  
             //这里业务环境只考虑一个用户对应一种角色的情况；如果一个用户对应多个角色的话这里需要修改
             if(user.getRole() != null){
+                boolean enabled = user.getStatus() != 0;
                 // 设置角色  
-                return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),  
-                    AuthorityUtils.createAuthorityList(user.getRole().getName()));  
+                return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
+                        enabled, true, true, true, AuthorityUtils.createAuthorityList(user.getRole().getName()));  
             }else{
                 System.out.println("用户没有权限!");
                 throw new UsernameNotFoundException("用户没有权限!");

@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.jdbc.JdbcDaoImpl;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,6 +44,7 @@ public class TestService {
     
 //    @Test
     public void testAddUser(){
+//        JdbcDaoImpl
         Role role = roleService.findRoleByName("ROLE_USER");
         Set<Role> roles = new HashSet<>();
         roles.add(role);

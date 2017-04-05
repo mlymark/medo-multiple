@@ -12,6 +12,7 @@ import au.com.w4u.medo.service.RoleService;
 import au.com.w4u.medo.service.UserService;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.PostConstruct;
@@ -56,6 +57,7 @@ public class AddUserView implements Serializable {
         encoder.setEncodeHashAsBase64(true);
         randomPwd = encoder.encodePassword(randomPwd, user.getUsername());
         user.setPassword(randomPwd);
+        user.setCreateDate(new Date());
         Role role = roleService.findOne(roleId);
         user.setRole(role);
         userService.create(user);

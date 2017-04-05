@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
  *
  * @author dell
  */
-@Component
+@Component("myBasicAuthenticationEntryPoint")
 public class MyBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPoint {
  
     @Override
@@ -33,7 +33,7 @@ public class MyBasicAuthenticationEntryPoint extends BasicAuthenticationEntryPoi
  
     @Override
     public void afterPropertiesSet() throws Exception {
-        setRealmName("Baeldung");
+        setRealmName("请输入管理员密码");
         super.afterPropertiesSet();
     }
 }
